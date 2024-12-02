@@ -2,12 +2,12 @@
   width: 100%;
   height: 100vh;
   text-align: center;
-  background-color: #15202B;
+  background-color: #15202b;
   overflow-y: hidden;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-.list{
+.list {
   list-style: none;
   text-align: left;
   display: flex;
@@ -19,26 +19,31 @@
   padding-left: 100px;
 }
 
-.tab{
+.tab {
   display: flex;
   justify-content: left;
   align-items: center;
   gap: 25px;
 }
 
-.sidebar{
+.tweet {
+  padding: 2rem;
+  text-align: left;
+}
+
+.sidebar {
   display: flex;
   flex-direction: column;
   width: 400px;
   padding-top: 20px;
-  border-right: 1px #38444D solid;
+  border-right: 1px #38444d solid;
   height: 100vh;
 }
 
-.post{
+.post {
   width: 60%;
   margin-left: 90px;
-  background-color: #1DA1F2;
+  background-color: #1da1f2;
   border-radius: 100px;
   color: white;
   height: 50px;
@@ -48,32 +53,36 @@
   font-size: 20px;
 }
 
-.body{
+.post:disabled {
+  background-color: #204366;
+}
+
+.body {
   display: flex;
   color: white;
 }
 
-input{
+input {
   border-radius: 20px;
 }
 
-.account{
+.account {
   width: 300px;
   height: 40px;
 }
 
-.info{
+.info {
   width: 500px;
   height: 40px;
 }
 
-.main{
+.main {
   padding-left: 50px;
   padding-right: 200px;
-  border-right: 1px #38444D solid;
+  border-right: 1px #38444d solid;
 }
 
-.input{
+.input {
   display: flex;
   flex-direction: column;
   justify-content: left;
@@ -81,7 +90,7 @@ input{
   gap: 15px;
 }
 
-img{
+img {
   width: 100px;
   padding-left: 100px;
 }

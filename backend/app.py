@@ -14,60 +14,51 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-model_path = './finetuned'
+# Load the generic LLaMA model and tokenizer
+model_path = './llama'
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 model = AutoModelForCausalLM.from_pretrained(model_path)
 
-device = 'cpu'
+device = 'cpu'  # Use CPU by default
 try:
-    device = 'mps'
+    device = 'mps'  # Use Apple MPS if available
 except:
     pass
 
 generator = pipeline("text-generation", model=model, tokenizer=tokenizer, device=device)
 
-class AITAPostRequest(BaseModel):
-    topic: str
-    judgment: str
+class TweetRequest(BaseModel):
+    account_style: str  # The style of the Twitter account
+    content: str  # The content of the tweet
     temperature: float = 0.7
-    top_k: int = 100
+    top_k: int = 50
     top_p: float = 0.9
-    max_length: int = 512
+    max_length: int = 280  # Tweets are limited to 280 characters
 
-@app.post("/generate")
-async def generate_aita_post(request: AITAPostRequest):
-        
+@app.post("/generate_tweet")
+async def generate_tweet(request: TweetRequest):
+    # Format the prompt to mimic the tweet
     prompt = (
-        "Write a Reddit AITA post in the following format:\n"
-        "Topic: <Topic>\n"
-        "Judgment: <Judgment>\n"
-        "Response: <Here, write the main content of the post. Provide background, actions, and justification.>\n"
-        "AITA?\n\n"
-        f"Topic: {request.topic}\n"
-        f"Judgment: {request.judgment.upper()}\n"
+        f"Generate a tweet in the style of the account '{request.account_style}'.\n"
+        f"Tweet content: {request.content}\n"
+        "Tweet:\n"
     )
 
+    # Generate the tweet using the model
     generated_texts = generator(
         prompt,
         max_length=request.max_length,
         temperature=request.temperature,
         top_k=request.top_k,
         top_p=request.top_p,
+        num_return_sequences=1  # Generate a single tweet
     )
 
-    cleaned_texts = [
-        re.sub(r'[\\\n\"#  ]+', ' ', generated_text['generated_text']).strip()
-        for generated_text in generated_texts
-    ]
+    # Clean up the generated text
+    cleaned_text = re.sub(r'[\\\n\"#]+', ' ', generated_texts[0]['generated_text']).strip()
 
-    if "Response:" in cleaned_texts[0]:
-        post_content = cleaned_texts[0].split("Response: ")[2].strip()
-    else:
-        post_content = cleaned_texts[0]
+    # Ensure the output adheres to Twitter's character limit
+    if len(cleaned_text) > 280:
+        cleaned_text = cleaned_text[:277] + "..."
 
-    post_content = post_content + "..."
-
-    if not post_content.endswith("AITA?"):
-        post_content += " AITA?"
-
-    return {"post": post_content}
+    return {"tweet": cleaned_text}

@@ -10,7 +10,6 @@ import { CgMoreO } from "react-icons/cg";
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
   const tabs = [
     {tab: "Home", icon: GoHomeFill}, 
     {tab: "Explore", icon: FaMagnifyingGlass}, 
@@ -36,12 +35,14 @@ function App() {
         <button className='post'><span>Post</span></button>
       </div>
       <div className="main">
-        <h1>Create your tweet!</h1>
+        <h1>Create your hit tweet!</h1>
         <div className='input'>
           <span>Account you want the tweet to sound like</span>
+          <input className="account" name="account"/>
           <span>What you want the tweet to be about</span>
+          <input className="info" name="info"/>
           <button className='post' 
-            style={{margin: '0px'}}
+            style={{margin: '0px', marginTop: '40px'}}
           >
             <span>Generate</span>
           </button>

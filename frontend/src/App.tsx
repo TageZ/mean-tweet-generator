@@ -8,14 +8,28 @@ import { FaRegBookmark } from "react-icons/fa";
 import { FaRegUser } from "react-icons/fa";
 import { CgMoreO } from "react-icons/cg";
 import './App.css'
+import axios from 'axios';
 
 function App() {
+  const [tweet, setTweet] = useState<string>("Loading");
   const [account, setAccount] = useState<string>();
   const [info, setInfo] = useState<string>();
 
   const handleSubmit = () => {
     console.log(account, info);
   }
+
+  const generateTweet = async () => {
+    try {
+      const response = await axios.post('http://localhost:8000/generate_tweet', {
+        account_style: account,
+        content: info
+      });
+      setTweet(response.data.tweet);
+    } catch (err) {
+      console.log('Failed to generate tweet. Please try again.');
+    }
+  };
 
   const tabs = [
     {tab: "Home", icon: GoHomeFill}, 
@@ -55,6 +69,9 @@ function App() {
             <span>Generate</span>
           </button>
         </div>
+      </div>
+      <div className='tweet'>
+        <span className='generated'>{tweet? tweet : ""}</span>
       </div>
     </div>
   )

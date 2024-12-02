@@ -10,6 +10,13 @@ import { CgMoreO } from "react-icons/cg";
 import './App.css'
 
 function App() {
+  const [account, setAccount] = useState<string>();
+  const [info, setInfo] = useState<string>();
+
+  const handleSubmit = () => {
+    console.log(account, info);
+  }
+
   const tabs = [
     {tab: "Home", icon: GoHomeFill}, 
     {tab: "Explore", icon: FaMagnifyingGlass}, 
@@ -38,11 +45,12 @@ function App() {
         <h1>Create your hit tweet!</h1>
         <div className='input'>
           <span>Account you want the tweet to sound like</span>
-          <input className="account" name="account"/>
+          <input className="account" name="account" onChange={(e) => setAccount(e.target.value)}/>
           <span>What you want the tweet to be about</span>
-          <input className="info" name="info"/>
+          <input className="info" name="info" onChange={(e) => setInfo(e.target.value)}/>
           <button className='post' 
             style={{margin: '0px', marginTop: '40px'}}
+            onClick={handleSubmit}
           >
             <span>Generate</span>
           </button>

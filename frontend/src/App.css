@@ -2,11 +2,14 @@
   width: 100%;
   height: 100vh;
   text-align: center;
-  background-color: #15202b;
-  overflow-y: hidden;
+  background-color: #000000;
+  overflow: hidden;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.body {
+  display: flex;
+}
 .list {
   list-style: none;
   text-align: left;
@@ -27,21 +30,78 @@
 }
 
 .tweet {
-  padding: 2rem;
-  text-align: left;
+  border-left: 1px #2f3336 solid;
+  margin-left: -1.3rem;
+  width: 32%;
+}
+.tweet h1 {
+  width: 120%;
+  padding-bottom: 2.15rem;
+  border-bottom: 1px #2f3336 solid;
 }
 
-.sidebar {
+.tweet-input {
   display: flex;
   flex-direction: column;
-  width: 400px;
-  padding-top: 20px;
-  border-right: 1px #38444d solid;
+  width: 97.5%;
+  border: none;
+}
+
+.tweet-sub {
+  width: 100%;
+}
+
+.main-img {
+  height: 100%;
+  align-self: center;
+  padding-right: 6rem;
+  width: 80%;
+}
+
+.img-input {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+  justify-content: center;
+  border-top: 1px #2f3336 solid;
+}
+.tweet-genre {
+  border: none;
+  background: none;
+  outline: none;
+  color: inherit;
+  font: inherit;
+  font-size: 1.5rem;
+  padding: 0;
+  margin: 0;
+  width: 70%;
+  line-height: 5;
+}
+
+.tweet-genre::placeholder {
+  line-height: 5;
+}
+.sidebar {
+  display: flex;
+  width: 37rem;
+  flex-direction: column;
   height: 100vh;
+  margin-left: 10rem;
+}
+
+.sidebar-img {
+  height: 101%;
+  padding-left: 359px;
+  width: 50%;
+  border-right: 1px #2f3336 solid;
+
 }
 
 .post {
-  width: 60%;
+  position: absolute;
+  top: 30.5%;
+  width: 7rem;
+  right: 38%;
   margin-left: 90px;
   background-color: #1da1f2;
   border-radius: 100px;
@@ -57,13 +117,15 @@
   background-color: #204366;
 }
 
+
 .body {
   display: flex;
   color: white;
 }
 
-input {
-  border-radius: 20px;
+.main {
+  margin-left: 4rem;
+
 }
 
 .account {
@@ -77,9 +139,7 @@ input {
 }
 
 .main {
-  padding-left: 50px;
-  padding-right: 200px;
-  border-right: 1px #38444d solid;
+  width: 50rem;
 }
 
 .input {
@@ -88,9 +148,4 @@ input {
   justify-content: left;
   align-items: start;
   gap: 15px;
-}
-
-img {
-  width: 100px;
-  padding-left: 100px;
 }

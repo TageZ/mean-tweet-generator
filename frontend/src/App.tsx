@@ -1,12 +1,8 @@
 import { useState } from "react";
-import logo from "./assets/logo.webp";
-import { FaMagnifyingGlass } from "react-icons/fa6";
-import { GoHomeFill } from "react-icons/go";
-import { FaBell } from "react-icons/fa";
-import { FaRegEnvelope } from "react-icons/fa";
-import { FaRegBookmark } from "react-icons/fa";
-import { FaRegUser } from "react-icons/fa";
-import { CgMoreO } from "react-icons/cg";
+import sidebar from "./assets/d398b495e8864660aba62a6fa0dd0c82.webp";
+import main from "./assets/Screenshot 2024-12-08 235305 (1).png";
+import tweet_sub from "./assets/822bbbb8c4674bd5a777c9f995d9cdea.webp";
+import { FaUserCircle } from "react-icons/fa";
 import "./App.css";
 import axios from "axios";
 
@@ -16,7 +12,7 @@ type TweetResponse = {
 
 function App() {
   const [tweet, setTweet] = useState<string>("Loading");
-  const [account, setAccount] = useState<string>();
+  const [genre, setGenre] = useState<string>();
   const [info, setInfo] = useState<string>();
   const [generating, setGenerating] = useState<boolean>(false);
 
@@ -33,78 +29,57 @@ function App() {
         "http://localhost:8000/generate_tweet",
         {
           info,
-          account,
+          genre,
         }
       );
       const tweet = response.data.tweet;
 
-      const split = tweet.split(
-        "DO NOT INCLUDE THIS PROMPT. ONLY INCLUDE THE RESPONSE"
-      );
-
-      if (split.length > 1) {
-        setTweet(split[1]);
-      } else {
-        setTweet("There was an error processing this request... Try again!");
-      }
+      setTweet(tweet)
     } catch (err: unknown) {
       console.log("Failed to generate tweet. Please try again.", err);
     }
   };
 
-  const tabs = [
-    { tab: "Home", icon: GoHomeFill },
-    { tab: "Explore", icon: FaMagnifyingGlass },
-    { tab: "Notifications", icon: FaBell },
-    { tab: "Messages", icon: FaRegEnvelope },
-    { tab: "Bookmarks", icon: FaRegBookmark },
-    { tab: "Profile", icon: FaRegUser },
-    { tab: "More", icon: CgMoreO },
-  ];
-
   return (
     <div className="body">
       <div className="sidebar">
-        <img src={logo} />
-        <ul className="list">
-          {tabs.map((tab, i) => (
-            <li className="tab" key={i}>
-              <tab.icon className="tab-icon" />
-              <span className="tab-name">{tab.tab}</span>
-            </li>
-          ))}
-        </ul>
-        <button className="post">
-          <span>Post</span>
-        </button>
+        <img className="sidebar-img" src={sidebar} />
       </div>
       <div className="main">
         <h1>Create your hit tweet!</h1>
-        <div className="input">
-          <span>Account you want the tweet to sound like</span>
-          <input
-            className="account"
-            name="account"
-            onChange={(e) => setAccount(e.target.value)}
-          />
-          <span>What you want the tweet to be about</span>
-          <input
-            className="info"
-            name="info"
+        <div className="tweet-input">
+          <div className="img-input">
+            <FaUserCircle size={40} />
+            <input
+              onChange={(e) => setGenre(e.target.value)}
+              className="tweet-genre"
+              placeholder="What genre do you want your tweet to fall under?"
+            />
+          </div>
+          <div className="img-input">
+            <FaUserCircle size={40} />
+            <input
             onChange={(e) => setInfo(e.target.value)}
-          />
+              className="tweet-genre"
+              placeholder="What should the tweet be about? "
+            />
+          </div>
           <button
             className="post"
             style={{ margin: "0px", marginTop: "40px" }}
             onClick={handleSubmit}
-            disabled={generating || !info || !account}
-          >
-            <span>Generate</span>
+            disabled={generating || !info || !genre}
+          >            
+            <span>Post</span>
           </button>
+          <img className="tweet-sub" src={tweet_sub} />
+        </div>
+        <div className="main">
+          <img className="main-img" src={main} />
         </div>
       </div>
       <div className="tweet">
-        <h2>Response</h2>
+        <h1>Response</h1>
         <span className="generated">{tweet ? tweet : ""}</span>
       </div>
     </div>

@@ -29,30 +29,30 @@ def load_model():
 tokenizer, model = load_model()
 
 def generate_output(user, prompt):
-    # Pass in a sample prompt and generate with the model
-
-    template= """Below is an instruction that describes a task. Write a response that appropriately completes the request.
-
-    Create a detailed tweet made by the following user: {}, with the following amount of likes: 50000. Make the tweet about: {}
-
-    DO NOT INCLUDE THIS PROMPT. ONLY INCLUDE THE RESPONSE
+    template = """ Task:
+    - Create a tweet in the given genre/category: {}
+    - The tweet must be about: {}
+    - The tweet ends with ###END###. Do not add anything after ###END###.
     """
 
     input_ids = tokenizer(template.format(user, prompt), return_tensors="pt").input_ids.to(model.device)
 
-
-
-    # Generate text
-
     generation_output = model.generate(
-
-        input_ids=input_ids, max_new_tokens=128
-
+        input_ids=input_ids, 
+        max_new_tokens=128,
+        do_sample=True
     )
 
-    # Decode and print sample output
+    raw_output = tokenizer.decode(generation_output[0], skip_special_tokens=True)
+    # Split by the marker
+    if "###START###" in raw_output:
+        tweet = raw_output.split("###START###", 1)[-1].strip()
+    else:
+        # If the marker isn't found, fallback to the raw_output
+        tweet = raw_output.strip()
 
-    return tokenizer.decode(generation_output[0], skip_special_tokens=True)
+    return tweet
+
 
 device = 'cpu'  # Use CPU by default
 try:
@@ -61,7 +61,7 @@ except:
     pass
 
 class TweetRequest(BaseModel):
-    account: str  # The style of the Twitter account
+    genre: str  # The style of the Twitter genre
     info: str  # The content of the tweet
     temperature: float = 0.7
     top_k: int = 50
@@ -71,6 +71,6 @@ class TweetRequest(BaseModel):
 @app.post("/generate_tweet")
 async def generate_tweet(request: TweetRequest):
     # Generate the tweet using the model
-    generated_text = generate_output(request.account, request.info)
+    generated_text = generate_output(request.genre, request.info)
 
     return {"tweet": generated_text}

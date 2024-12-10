@@ -1,11 +1,10 @@
 import { useState } from "react";
 import sidebar from "./assets/d398b495e8864660aba62a6fa0dd0c82.webp";
-import main from "./assets/Screenshot 2024-12-08 235305 (1).png";
-import tweet_sub from "./assets/822bbbb8c4674bd5a777c9f995d9cdea.webp";
+import main from "./assets/main.png";
 import { FaUserCircle } from "react-icons/fa";
 import "./App.css";
 import axios from "axios";
-import verified from "./assets/Twitter_Verified_Badge.svg.png"
+import verified from "./assets/Twitter_Verified_Badge.svg.png";
 
 type TweetResponse = {
   tweet: string;
@@ -13,8 +12,7 @@ type TweetResponse = {
 
 function App() {
   const [tweet, setTweet] = useState<string>("");
-  const [genre, setGenre] = useState<string>();
-  const [info, setInfo] = useState<string>();
+  const [prompt, setPrompt] = useState<string>();
   const [generating, setGenerating] = useState<boolean>(false);
 
   const handleSubmit = async () => {
@@ -29,74 +27,74 @@ function App() {
       const response = await axios.post<TweetResponse>(
         "http://localhost:8000/generate_tweet",
         {
-          info,
-          genre,
+          prompt,
         }
       );
       const tweet = response.data.tweet;
 
-      setTweet(tweet)
+      setTweet(tweet);
     } catch (err: unknown) {
       console.log("Failed to generate tweet. Please try again.", err);
     }
   };
 
   return (
-    <div className="body">
-      <div className="sidebar">
+    <div className="container">
+      <div className="cell" style={{ gridRow: "1/3", gridColumn: "1/2" }}>
         <img className="sidebar-img" src={sidebar} />
       </div>
-      <div className="main">
-        <h1>Create your hit tweet!</h1>
+      <div className="cell" style={{ gridRow: "3/4", gridColumn: "1/2" }}></div>
+      <div className="cell" style={{ gridRow: "1/2", gridColumn: "2/3" }}>
+        <h2>Create your hit tweet!</h2>
         <div className="tweet-input">
           <div className="img-input">
             <FaUserCircle size={40} />
             <input
-              onChange={(e) => setGenre(e.target.value)}
-              className="tweet-genre"
-              placeholder="What genre do you want your tweet to fall under?"
-            />
-          </div>
-          <div className="img-input">
-            <FaUserCircle size={40} />
-            <input
-            onChange={(e) => setInfo(e.target.value)}
+              onChange={(e) => setPrompt(e.target.value)}
               className="tweet-genre"
               placeholder="What should the tweet be about? "
             />
           </div>
           <button
             className="post"
-            style={{ margin: "0px", marginTop: "40px" }}
             onClick={handleSubmit}
-            disabled={generating || !info || !genre}
-          >            
+            disabled={generating || !prompt}
+          >
             <span>Post</span>
           </button>
-          <img className="tweet-sub" src={tweet_sub} />
         </div>
+      </div>
+      <div className="cell" style={{ gridRow: "2/3", gridColumn: "2/3" }}>
         <div className="main">
           <img className="main-img" src={main} />
         </div>
       </div>
-      <div className="tweet">
-  <h1>Response</h1>
-  <div className="tweet-profile">
-    <FaUserCircle size={40} />
-    <span>Twitter_User</span>
-    <span className="tweet-profile-name">
-      @User <img className="verified" src={verified} />
-    </span>
-  </div>
-  <div className="generated">
-    {generating ? (
-      <span className="loader"></span>
-    ) : (
-      tweet
-    )}
-  </div>  
-</div>
-
+      <div className="cell" style={{ gridRow: "3/4", gridColumn: "2/3" }}></div>
+      <div
+        className="cell response-cell"
+        style={{ gridRow: "1/3", gridColumn: "3/4" }}
+      >
+        {tweet && (
+          <>
+            <h2>Response</h2>{" "}
+            <div className="tweet-profile">
+              <FaUserCircle size={40} />
+              <span>Twitter_User</span>{" "}
+              <span className="tweet-profile-name">
+                @User <img className="verified" src={verified} />{" "}
+              </span>{" "}
+            </div>{" "}
+            <div className="generated">
+              {generating ? (
+                <span className="loader"></span>
+              ) : (
+                tweet.split("\n").map((l) => <p>{l}</p>)
+              )}{" "}
+            </div>
+          </>
+        )}
+      </div>
+      <div className="cell" style={{ gridRow: "3/4", gridColumn: "3/4" }}></div>
     </div>
   );
 }

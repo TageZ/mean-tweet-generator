@@ -5,6 +5,9 @@ from pydantic import BaseModel
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
+import os
+
+os.environ["WANDB_DISABLED"] = "true" # disable weights and biases tool
 
 app = FastAPI()
 
@@ -18,37 +21,33 @@ app.add_middleware(
 
 # Load the generic LLaMA model and tokenizer
 def load_model():
-    secret_value_0 = "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"
+    from transformers import AutoTokenizer, AutoModelForCausalLM
 
-    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-1B-Instruct", token=secret_value_0)
-
-    model = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.2-1B-Instruct", token=secret_value_0, device_map="auto")
+    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.2-1B-Instruct")
+    model = AutoModelForCausalLM.from_pretrained("finetuned", device_map="auto")
 
     return [tokenizer, model]
 
 tokenizer, model = load_model()
+generator = pipeline("text-generation", model=model, tokenizer=tokenizer, device_map='auto')
 
-def generate_output(user, prompt):
-    template= """Below is an instruction that describes a task. Write a response that appropriately completes the request.
-
-    Create a unique and viral tweet that falls under this genre/category: {}, Make the tweet about: {}
-
-    DO NOT INCLUDE THIS PROMPT. ONLY INCLUDE THE RESPONSE. 
-
-    """
-
-    input_ids = tokenizer(template.format(user, prompt), return_tensors="pt").input_ids.to(model.device)
-
-    generation_output = model.generate(
-        input_ids=input_ids, 
-        max_new_tokens=128,
-        do_sample=True
+# Define a function to generate text with different settings
+def generate_with_settings(prompt, temperature=1.0, top_k=50, top_p=0.9, max_length=150):
+    return generator(
+        prompt,
+        max_length=max_length,
+        temperature=temperature,
+        top_k=top_k,
+        top_p=top_p,
+        repetition_penalty=1.2,
     )
 
-    raw_output = tokenizer.decode(generation_output[0], skip_special_tokens=True)
-    tweets = re.findall(r'"(.*?)"', raw_output.strip(), re.DOTALL)
-    print(tweets)
-    return tweets
+def generate_output(prompt):
+    prompt = "Write a detailed tweet about " + prompt
+
+    response = str(generate_with_settings(prompt, temperature=0.25, top_k=5, top_p=0.9)[0]["generated_text"]).replace(prompt, "", 1).strip()
+
+    return response
 
 
 device = 'cpu'  # Use CPU by default
@@ -58,8 +57,7 @@ except:
     pass
 
 class TweetRequest(BaseModel):
-    genre: str  # The style of the Twitter genre
-    info: str  # The content of the tweet
+    prompt: str  # The content of the tweet
     temperature: float = 0.7
     top_k: int = 50
     top_p: float = 0.9
@@ -68,6 +66,6 @@ class TweetRequest(BaseModel):
 @app.post("/generate_tweet")
 async def generate_tweet(request: TweetRequest):
     # Generate the tweet using the model
-    generated_text = generate_output(request.genre, request.info)
+    generated_text = generate_output(request.prompt)
 
     return {"tweet": generated_text}

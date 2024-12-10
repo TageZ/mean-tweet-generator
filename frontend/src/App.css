@@ -27,8 +27,8 @@
 }
 
 .cell .main-img {
-  width: calc(100% - 2rem);
-  margin: 1rem;
+  width: 100%;
+  margin-top: 1rem;
 }
 
 .cell img.verified {

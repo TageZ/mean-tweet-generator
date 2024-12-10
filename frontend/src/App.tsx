@@ -5,13 +5,14 @@ import tweet_sub from "./assets/822bbbb8c4674bd5a777c9f995d9cdea.webp";
 import { FaUserCircle } from "react-icons/fa";
 import "./App.css";
 import axios from "axios";
+import verified from "./assets/Twitter_Verified_Badge.svg.png"
 
 type TweetResponse = {
   tweet: string;
 };
 
 function App() {
-  const [tweet, setTweet] = useState<string>("Loading");
+  const [tweet, setTweet] = useState<string>("");
   const [genre, setGenre] = useState<string>();
   const [info, setInfo] = useState<string>();
   const [generating, setGenerating] = useState<boolean>(false);
@@ -79,9 +80,23 @@ function App() {
         </div>
       </div>
       <div className="tweet">
-        <h1>Response</h1>
-        <span className="generated">{tweet ? tweet : ""}</span>
-      </div>
+  <h1>Response</h1>
+  <div className="tweet-profile">
+    <FaUserCircle size={40} />
+    <span>Twitter_User</span>
+    <span className="tweet-profile-name">
+      @User <img className="verified" src={verified} />
+    </span>
+  </div>
+  <div className="generated">
+    {generating ? (
+      <span className="loader"></span>
+    ) : (
+      tweet
+    )}
+  </div>  
+</div>
+
     </div>
   );
 }

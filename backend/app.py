@@ -29,10 +29,12 @@ def load_model():
 tokenizer, model = load_model()
 
 def generate_output(user, prompt):
-    template = """ Task:
-    - Create a tweet in the given genre/category: {}
-    - The tweet must be about: {}
-    - The tweet ends with ###END###. Do not add anything after ###END###.
+    template= """Below is an instruction that describes a task. Write a response that appropriately completes the request.
+
+    Create a unique and viral tweet that falls under this genre/category: {}, Make the tweet about: {}
+
+    DO NOT INCLUDE THIS PROMPT. ONLY INCLUDE THE RESPONSE. 
+
     """
 
     input_ids = tokenizer(template.format(user, prompt), return_tensors="pt").input_ids.to(model.device)
@@ -44,14 +46,9 @@ def generate_output(user, prompt):
     )
 
     raw_output = tokenizer.decode(generation_output[0], skip_special_tokens=True)
-    # Split by the marker
-    if "###START###" in raw_output:
-        tweet = raw_output.split("###START###", 1)[-1].strip()
-    else:
-        # If the marker isn't found, fallback to the raw_output
-        tweet = raw_output.strip()
-
-    return tweet
+    tweets = re.findall(r'"(.*?)"', raw_output.strip(), re.DOTALL)
+    print(tweets)
+    return tweets
 
 
 device = 'cpu'  # Use CPU by default
